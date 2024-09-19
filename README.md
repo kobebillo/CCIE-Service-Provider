@@ -1,4 +1,3 @@
 # Cisco - DMVPN
-### Topology Example
-
-![DMVPN](https://github.com/user-attachments/assets/4befbc14-7c76-4d3f-88a0-c05b49b23ea5)
+### Topology
+![DMVPN](https://github.com/user-attachments/assets/dae7dd9d-0942-4143-a4a6-c7893e7378e9)
