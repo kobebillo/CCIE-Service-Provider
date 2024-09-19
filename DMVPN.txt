@@ -1,0 +1,113 @@
+DMVPN - Cisco
+https://learningnetwork.cisco.com/s/question/0D53i00000Kt55bCAB/dmvpn-is-accomplished-by-isp-or-by-companys-it-man-
+
+R1
+R1#sh run | sec Tunnel124
+interface Tunnel124
+ ip address 172.10.124.129 255.255.255.128
+ no ip redirects
+ ip nhrp map multicast 10.10.1.4
+ ip nhrp network-id 10
+ tunnel source Ethernet0/1
+ tunnel mode gre multipoint
+ tunnel key 10
+ 
+R1#ping 172.10.124.130
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 172.10.124.130, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 1/1/1 ms
+R1#ping 172.10.124.131
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 172.10.124.131, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 1/1/1 ms
+
+R1#sh ip nhrp detail
+172.10.124.130/32 via 172.10.124.130
+   Tunnel124 created 00:06:16, expire 01:56:14
+   Type: dynamic, Flags: unique registered
+   NBMA address: 10.10.1.2
+172.10.124.131/32 via 172.10.124.131
+   Tunnel124 created 00:06:11, expire 01:56:30
+   Type: dynamic, Flags: unique registered
+   NBMA address: 10.10.1.4
+
+R2
+R2#sh run | sec Tunnel124
+interface Tunnel124
+ ip address 172.10.124.130 255.255.255.128
+ no ip redirects
+ ip nhrp map 172.10.124.129 10.10.1.1
+ ip nhrp network-id 10
+ ip nhrp nhs 172.10.124.129
+ tunnel source Ethernet0/1
+ tunnel mode gre multipoint
+ tunnel key 10
+ 
+R2#ping 172.10.124.129
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 172.10.124.129, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 1/1/1 ms
+R2#ping 172.10.124.131
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 172.10.124.131, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 1/1/1 ms
+
+R2#sh ip nhrp detail
+172.10.124.129/32 via 172.10.124.129
+   Tunnel124 created 00:03:49, never expire
+   Type: static, Flags: used
+   NBMA address: 10.10.1.1
+172.10.124.130/32 via 172.10.124.130
+   Tunnel124 created 00:01:23, expire 01:58:36
+   Type: dynamic, Flags: router unique local
+   NBMA address: 10.10.1.2
+    (no-socket)
+  Requester: 172.10.124.131 Request ID: 3
+172.10.124.131/32 via 172.10.124.131
+   Tunnel124 created 00:01:23, expire 01:58:36
+   Type: dynamic, Flags: router
+   NBMA address: 10.10.1.4
+
+R4
+R4#sh run | sec Tunnel124
+interface Tunnel124
+ ip address 172.10.124.131 255.255.255.128
+ no ip redirects
+ ip nhrp map 172.10.124.129 10.10.1.1
+ ip nhrp map multicast 10.10.1.1
+ ip nhrp network-id 10
+ ip nhrp nhs 172.10.124.129
+ tunnel source Ethernet0/1
+ tunnel mode gre multipoint
+ tunnel key 10
+
+R4#ping 172.10.124.129
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 172.10.124.129, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 1/1/1 ms
+R4#ping 172.10.124.130
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 172.10.124.130, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 1/10/38 ms
+
+R4#sh ip nhrp detail
+172.10.124.129/32 via 172.10.124.129
+   Tunnel124 created 00:03:31, never expire
+   Type: static, Flags: used
+   NBMA address: 10.10.1.1
+172.10.124.130/32 via 172.10.124.130
+   Tunnel124 created 00:01:21, expire 01:58:38
+   Type: dynamic, Flags: router
+   NBMA address: 10.10.1.2
+172.10.124.131/32 via 172.10.124.131
+   Tunnel124 created 00:01:21, expire 01:58:38
+   Type: dynamic, Flags: router unique local
+   NBMA address: 10.10.1.4
+    (no-socket)
+  Requester: 172.10.124.130 Request ID: 3
